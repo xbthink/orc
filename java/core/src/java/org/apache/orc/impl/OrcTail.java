@@ -53,8 +53,9 @@ public final class OrcTail {
   public OrcTail(OrcProto.FileTail fileTail, ByteBuffer serializedTail,
                  long fileModificationTime) throws IOException {
     this(fileTail,
-        new BufferChunk(serializedTail, getStripeStatisticsOffset(fileTail)),
-        fileModificationTime);
+            serializedTail == null ? new BufferChunk(getStripeStatisticsOffset(fileTail), 0) :
+                    new BufferChunk(serializedTail, getStripeStatisticsOffset(fileTail)),
+            fileModificationTime);
   }
 
   public OrcTail(OrcProto.FileTail fileTail, BufferChunk serializedTail,

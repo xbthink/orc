@@ -584,9 +584,7 @@ public class ReaderImpl implements Reader {
       this.stripes = tail.getStripes();
       this.stripeStatistics = null;
       OrcProto.Footer footer = tail.getFooter();
-      this.encryption = new ReaderEncryption(footer, schema,
-          tail.getStripeStatisticsOffset(), tail.getTailBuffer(), stripes,
-          options.getKeyProvider(), conf);
+      this.encryption = new ReaderEncryption();
       this.softwareVersion = OrcUtils.getSoftwareVersion(footer.getWriter(),
           footer.getSoftwareVersion());
     }
