@@ -20,10 +20,15 @@ package org.apache.orc.impl;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.ReadOption;
 import org.apache.hadoop.io.ByteBufferPool;
+import org.apache.hadoop.util.IdentityHashStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sun.nio.ch.DirectBuffer;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
+import java.util.IdentityHashMap;
 
 class ZeroCopyShims {
   private static final class ByteBufferPoolAdapter implements ByteBufferPool {
@@ -45,12 +50,14 @@ class ZeroCopyShims {
   }
 
   private static final class ZeroCopyAdapter implements HadoopShims.ZeroCopyReaderShim {
+    private static final Logger LOG = LoggerFactory.getLogger(ZeroCopyAdapter.class);
     private final FSDataInputStream in;
     private final ByteBufferPoolAdapter pool;
     private static final EnumSet<ReadOption> CHECK_SUM = EnumSet
         .noneOf(ReadOption.class);
     private static final EnumSet<ReadOption> NO_CHECK_SUM = EnumSet
         .of(ReadOption.SKIP_CHECKSUMS);
+    private final IdentityHashMap<ByteBuffer, Object> readBuffers = new IdentityHashMap<>(0);
 
     ZeroCopyAdapter(FSDataInputStream in,
                            HadoopShims.ByteBufferPoolShim poolshim) {
@@ -69,12 +76,19 @@ class ZeroCopyShims {
       if (verifyChecksums) {
         options = CHECK_SUM;
       }
-      return this.in.read(this.pool, maxLength, options);
+
+      ByteBuffer bb = this.in.read(this.pool, maxLength, options);
+      readBuffers.put(bb, null);
+      return bb;
     }
 
     @Override
-    public void releaseBuffer(ByteBuffer buffer) {
-      this.in.releaseBuffer(buffer);
+    public void releaseAllBuffers() {
+      readBuffers.forEach((k, v) -> {
+        this.in.releaseBuffer(k);
+      });
+      readBuffers.clear();
+      LOG.info("release all buffers");
     }
 
     @Override
