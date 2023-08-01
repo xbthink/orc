@@ -597,6 +597,7 @@ public class ReaderImpl implements Reader {
       fileSystem = path.getFileSystem(options.getConfiguration());
       options.filesystem(fileSystem);
     }
+    fileSystem.setVerifyChecksum(false);
     return fileSystem;
   }
 
