@@ -1741,8 +1741,8 @@ public class TestSchemaEvolution {
     StripePlanner planner = new StripePlanner(fileType, new ReaderEncryption(),
         dataReader, OrcFile.WriterVersion.ORC_14, true, Integer.MAX_VALUE);
     boolean[] columns = new boolean[]{true, true, true};
-    planner.parseStripe(dataReader.getStripe(0), columns)
-        .readData(null, null, false, TypeReader.ReadPhase.ALL);
+    planner.parseStripe(dataReader.getStripe(0), columns);
+    planner.readData(null, null, false, TypeReader.ReadPhase.ALL);
     reader.startStripe(planner, TypeReader.ReadPhase.ALL);
     VectorizedRowBatch batch = readType.createRowBatch();
     reader.nextBatch(batch, 10, TypeReader.ReadPhase.ALL);

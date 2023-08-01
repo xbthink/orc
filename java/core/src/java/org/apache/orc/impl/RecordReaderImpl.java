@@ -1289,7 +1289,7 @@ public class RecordReaderImpl implements RecordReader {
    */
   private void readStripe() throws IOException {
     StripeInformation stripe = beginReadStripe();
-    planner.parseStripe(stripe, stripeFooter, fileIncluded);
+    stripeFooter = planner.parseStripe(stripe, fileIncluded);
     includedRowGroups = pickRowGroups();
 
     // move forward to the first unskipped row
@@ -1314,7 +1314,7 @@ public class RecordReaderImpl implements RecordReader {
 
   private StripeInformation beginReadStripe() throws IOException {
     StripeInformation stripe = stripes.get(currentStripe);
-    stripeFooter = readStripeFooter(stripe);
+//    stripeFooter = readStripeFooter(stripe);
     clearStreams();
     // setup the position in the stripe
     rowCountInStripe = stripe.getNumberOfRows();
@@ -1616,8 +1616,7 @@ public class RecordReaderImpl implements RecordReader {
         included = new boolean[schema.getMaximumId() + 1];
         Arrays.fill(included, true);
       }
-      StripeInformation stripeInformation = stripes.get(stripeIndex);
-      copy.parseStripe(stripeInformation, readStripeFooter(stripeInformation), included);
+      copy.parseStripe(stripes.get(stripeIndex), included);
       return copy.readRowIndex(readCols, null);
     }
   }

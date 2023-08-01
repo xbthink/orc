@@ -1504,7 +1504,8 @@ public class TestRecordReaderImpl {
     // all rows, but only columns 0 and 2.
     rowGroups = null;
     columns = new boolean[]{true, false, true};
-    planner.parseStripe(stripe, columns).readRowIndex(null, index);
+    planner.parseStripe(stripe, columns);
+    planner.readRowIndex(null, index);
     result = planner.readData(index, rowGroups, false, TypeReader.ReadPhase.ALL);
     assertEquals(START + 100000, result.get(0).getOffset());
     assertEquals(2000, result.get(0).getLength());
@@ -1523,7 +1524,8 @@ public class TestRecordReaderImpl {
 
     rowGroups = new boolean[]{false, false, false, false, false, true};
     columns = new boolean[]{true, true, true};
-    planner.parseStripe(stripe, columns).readRowIndex(null, index);
+    planner.parseStripe(stripe, columns);
+    planner.readRowIndex(null, index);
     result = planner.readData(index, rowGroups, false, TypeReader.ReadPhase.ALL);
     assertEquals(START + 500, result.get(0).getOffset());
     assertEquals(500, result.get(0).getLength());

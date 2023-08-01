@@ -2536,8 +2536,8 @@ public class TestVectorOrcFile {
         meta, reader.getWriterVersion(), true, Integer.MAX_VALUE);
     boolean[] columns = new boolean[schema.getMaximumId() + 1];
     Arrays.fill(columns, true);
-    OrcIndex index = planner.parseStripe(reader.getStripes().get(0), columns)
-                         .readRowIndex(null, null);
+    planner.parseStripe(reader.getStripes().get(0), columns);
+    OrcIndex index = planner.readRowIndex(null, null);
     // check the primitive columns to make sure they have the right number of
     // items in the first row group
     for(int c=1; c < 9; ++c) {
