@@ -136,9 +136,8 @@ public class StripePlanner {
    * @param columnInclude an array with true for each column to read
    * @return this for method chaining
    */
-  public StripePlanner parseStripe(StripeInformation stripe,
+  public StripePlanner parseStripe(StripeInformation stripe, OrcProto.StripeFooter footer,
                                    boolean[] columnInclude) throws IOException {
-    OrcProto.StripeFooter footer = dataReader.readStripeFooter(stripe);
     currentStripeId = stripe.getStripeId();
     originalStripeId = stripe.getEncryptionStripeId();
     writerTimezone = footer.getWriterTimezone();
