@@ -92,11 +92,18 @@ public class RecordReaderUtils {
       int tailLength = (int) stripe.getFooterLength();
 
       // read the footer
-      ByteBuffer tailBuf = ByteBuffer.allocate(tailLength);
-      file.readFully(offset, tailBuf.array(), tailBuf.arrayOffset(), tailLength);
+      ByteBuffer tailBuf = null;
+      if (zcr  == null) {
+        tailBuf = ByteBuffer.allocate(tailLength);
+        file.readFully(offset, tailBuf.array(), tailBuf.arrayOffset(), tailLength);
+      } else {
+        file.seek(offset);
+        tailBuf = zcr.readBuffer(tailLength, false);
+      }
+
       return OrcProto.StripeFooter.parseFrom(
           InStream.createCodedInputStream(InStream.create("footer",
-              new BufferChunk(tailBuf, 0), 0, tailLength, options)));
+              new BufferChunk(tailBuf.slice(), 0), 0, tailLength, options)));
     }
 
     @Override
