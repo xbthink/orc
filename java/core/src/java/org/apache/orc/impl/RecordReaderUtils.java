@@ -141,6 +141,9 @@ public class RecordReaderUtils {
     @Override
     public void releaseAllBuffers() {
       zcr.releaseAllBuffers();
+      if (pool != null) {
+        pool.clear();
+      }
     }
 
     @Override
