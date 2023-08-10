@@ -1405,6 +1405,7 @@ public class RecordReaderImpl implements RecordReader {
   @Override
   public boolean nextBatch(VectorizedRowBatch batch) throws IOException {
     try {
+      LOG.debug("start nextBatch");
       int batchSize;
       // do...while is required to handle the case where the filter eliminates all rows in the
       // batch, we never return an empty batch unless the file is exhausted
@@ -1444,6 +1445,7 @@ public class RecordReaderImpl implements RecordReader {
         batch.selectedInUse = false;
       }
 
+      LOG.debug("nextBatch size:{}", batchSize);
       return batchSize != 0;
     } catch (IOException e) {
       // Rethrow exception with file name in log message
